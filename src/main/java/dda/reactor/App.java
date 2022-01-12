@@ -77,5 +77,18 @@ public class App
             });
         })
                 .subscribe(System.out::println);
+
+        Flux<String> first = Flux.just("World", "code");
+        Flux<String> second = Flux.just("Hello", "World", "Java", "Linux");
+
+        second
+                .zipWith(first, (s, f) -> String.format("%s, %s", f, s))
+                .delayElements(Duration.ofMillis(1000))
+                .timeout(Duration.ofMillis(800))
+                .retry(3)
+                .onErrorReturn("Too slow")
+                .subscribe(System.out::println, System.err::println, () -> System.out.println("Finished"));
+
+        Thread.sleep(4000);
     }
 }
